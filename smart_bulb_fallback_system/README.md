@@ -32,3 +32,4 @@ var url = "http://<HomeAssistantURL>/empty";
 [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://raw.githubusercontent.com/andrewamidei/home-assistant-blueprints/refs/heads/main/Smart%20Bulb%20Fallback%20System/shelly_smart_lights_logic.yaml)
 
 After that your lights will stay on unless connection between Home Assistant and the shelly is lost. then your shelly device will fall back to manually switching the light! 
+
