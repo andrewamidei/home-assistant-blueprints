@@ -1,0 +1,73 @@
+blueprint:
+  name: Shelly Switching Logic
+  description: Prevent smart lights from losing power when connected to Shelly switches. If the network is down, the Shelly switches will fall back on manually switching the lights using the accompanying Shelly script.
+  domain: automation
+  input:
+    target_light:
+      name: Light
+      description: The light(s) in line with the shelly.
+      selector:
+        entity:
+          filter:
+            - domain: light
+    shelly_switch:
+      name: Shelly Switch
+      description: The shelly switch that controls the lights.
+      selector:
+        entity:
+          filter:
+            - domain: switch
+    shelly_input_switch:
+      name: Shelly Input Switch
+      description: The shelly input that is connected to the Light Switch.
+      selector:
+        entity:
+          filter:
+            - domain: binary_sensor
+
+triggers:
+  - trigger: state
+    entity_id:
+      - !input shelly_input_switch
+    to: null
+conditions: []
+actions:
+  - choose:
+      - conditions:
+          - condition: state
+            state: "on"
+            entity_id: !input shelly_switch
+        sequence:
+          - action: light.toggle
+            target:
+              entity_id: !input target_light
+            data:
+              transition: 0
+              brightness_pct: 100
+      - conditions:
+          - condition: state
+            state: "off"
+            entity_id: !input shelly_switch
+        sequence:
+          - action: switch.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: !input shelly_switch
+      - conditions:
+          - condition: or
+            conditions:
+              - condition: state
+                entity_id: !input target_light
+                state: unavailable
+              - condition: state
+                entity_id: !input target_light
+                state: unknown
+            alias: If Lights Are Unavalible or Unknown
+        sequence:
+          - action: switch.toggle
+            metadata: {}
+            data: {}
+            target:
+              entity_id: !input shelly_switch
+mode: single
